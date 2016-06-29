@@ -63,32 +63,38 @@ func (core *ccHTTPCore) doHTTPRequest(method, url string, headers map[string]str
 
 func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string]string,
 value interface{}) (result string, rtHeaders http.Header, err error) {
+	// Normalize url
+	if !strings.HasPrefix(uri, "/") {
+		uri = "/" + uri
+	}
 	url := fmt.Sprintf("https://%s%s", cc.endpoint, uri)
 
+	// Normalize query
 	if query != "" {
 		query = escapeURI(query)
 		url += "?" + query
 	}
 
-
-	// GET and HEAD method have no body
-	rc, ok := value.(io.Reader)
-	if !ok || method == "GET" || method == "HEAD" {
-		rc = nil
-	}
-
-	// header
+	// Normalize header
 	if headers == nil {
 		headers = make(map[string]string)
+	}
+	if cc.Token != "" {
+		// Authorization:Token xxxxxxxxxxxxxx
+		headers["Authorization"] = "Token " + cc.Token
+
 	}
 	// Content-Type:application/json
 	headers["Content-Type"] = "application/json"
 
-	// Normalize url
-	if !strings.HasPrefix(uri, "/") {
-		uri = "/" + uri
+	// body
+	rc, ok := value.(io.Reader)
+	// GET and HEAD method have no body
+	if !ok || method == "GET" || method == "HEAD" {
+		rc = nil
 	}
 
+	// do HTTP request
 	resp, err := cc.doHTTPRequest(method, url, headers, rc)
 	if err != nil {
 		return "", nil, err
@@ -96,7 +102,7 @@ value interface{}) (result string, rtHeaders http.Header, err error) {
 
 	defer resp.Body.Close()
 
-	// parse response
+	// parse HTTP response
 	// 20X
 	if (resp.StatusCode / 100) == 2 {
 		if method == "GET" && value != nil {

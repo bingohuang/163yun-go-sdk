@@ -32,10 +32,6 @@ func NewCC(appKey, appSecret string) *CloudComb {
 	return cc
 }
 
-func (cc *CloudComb) getToken() (token string) {
-	return "token " + cc.Token
-}
-
 // Get user's token
 func (cc *CloudComb) UserToken() (string, uint64, error) {
 	// user token request params
@@ -74,15 +70,22 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 
 // List containers' images
 func (cc *CloudComb) ContainersImages() (string, error)   {
-	headers := make(map[string]string)
-	// Authorization:Token xxxxxxxxxxxxxx
-	headers["Authorization"] = "Token " + cc.Token
-
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", headers, nil)
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", nil, nil)
 	if err != nil {
 		return "", err
 	}
 
 	return result, nil
 }
+
+// List containers
+func (cc *CloudComb) Containers() (string, error)   {
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
 

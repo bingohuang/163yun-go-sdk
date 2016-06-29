@@ -32,3 +32,12 @@ func TestCloudComb_ContainersImages(t *testing.T) {
 	}
 
 }
+
+func TestCloudComb_Containers(t *testing.T) {
+	if res, err := cc.Containers(); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n", res)
+	}
+}
