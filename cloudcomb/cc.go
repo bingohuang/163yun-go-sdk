@@ -2,12 +2,12 @@ package cloudcomb
 
 import (
 	"fmt"
-	URL "net/url"
 	"io"
+	URL "net/url"
 )
 
 const (
-  Version = "0.0.1"
+	Version = "0.0.1"
 )
 
 const (
@@ -37,7 +37,6 @@ func escapeURI(uri string) string {
 	Uri.Path = uri
 	return Uri.String()
 }
-
 
 // Because of io.Copy use a 32Kb buffer, and, it is hard coded
 // user can specify a chunksize with upyun.SetChunkSize

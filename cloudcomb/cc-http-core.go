@@ -1,15 +1,15 @@
 package cloudcomb
 
 import (
+	"errors"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"strconv"
-	"time"
 	"strings"
-	"fmt"
-	"io/ioutil"
-	"errors"
+	"time"
 )
 
 // cloudcomb http core struct
@@ -62,7 +62,7 @@ func (core *ccHTTPCore) doHTTPRequest(method, url string, headers map[string]str
 }
 
 func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string]string,
-value interface{}) (result string, rtHeaders http.Header, err error) {
+	value interface{}) (result string, rtHeaders http.Header, err error) {
 	// Normalize url
 	if !strings.HasPrefix(uri, "/") {
 		uri = "/" + uri
@@ -123,4 +123,3 @@ value interface{}) (result string, rtHeaders http.Header, err error) {
 	}
 
 }
-

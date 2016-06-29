@@ -39,8 +39,8 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 		AppKey    string `json:"app_key"`
 		AppSecret string `json:"app_secret"`
 	}
-	utq := UserTokenReq {
-		AppKey: cc.appKey,
+	utq := UserTokenReq{
+		AppKey:    cc.appKey,
 		AppSecret: cc.appSecret,
 	}
 
@@ -55,7 +55,7 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 
 	// user token response messages
 	type UserTokenRes struct {
-		Token    string `json:"token"`
+		Token     string `json:"token"`
 		ExpiresIn uint64 `json:"expires_in"`
 	}
 	var uts UserTokenRes
@@ -69,7 +69,7 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 }
 
 // List containers' images
-func (cc *CloudComb) ContainersImages() (string, error)   {
+func (cc *CloudComb) ContainersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -79,7 +79,7 @@ func (cc *CloudComb) ContainersImages() (string, error)   {
 }
 
 // List containers
-func (cc *CloudComb) Containers() (string, error)   {
+func (cc *CloudComb) Containers() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -87,5 +87,3 @@ func (cc *CloudComb) Containers() (string, error)   {
 
 	return result, nil
 }
-
-
