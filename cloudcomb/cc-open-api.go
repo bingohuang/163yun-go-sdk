@@ -1,14 +1,15 @@
 package cloudcomb
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-	URL "net/url"
 	"strconv"
 	"strings"
+	"encoding/json"
 )
 
 // Cloudcomb Open API Client
@@ -20,6 +21,12 @@ type CloudComb struct {
 	appSecret string
 	Token     string
 	Expires   int
+}
+
+// Generate API token request payload
+type UserToken struct {
+	AppKey    string `json:"app_key"`
+	AppSecret string `json:"app_secret"`
 }
 
 func NewCC(appKey, appSecret string) *CloudComb {
@@ -39,19 +46,18 @@ func (cc *CloudComb) getToken() (token string) {
 	return "token " + cc.Token
 }
 
-func (cc *CloudComb) token() (result string, error) {
-	headers := make(map[string]string)
-	headers["Content-Type"] = "application/json"
+func (cc *CloudComb) UserToken() (string, error) {
+	ut := UserToken {
+		AppKey: cc.appKey,
+		AppSecret: cc.appSecret,
+	}
 
-	form := make(URL.Values)
-	form.Add("app_key", cc.appKey)
-	form.Add("app_secret", cc.appSecret)
+	body := new(bytes.Buffer)
+	json.NewEncoder(body).Encode(ut)
 
-	body := strings.NewReader(form.Encode())
-
-	result, _, err := cc.doRESTRequest("POST", "/api/v1/token", "", headers, body)
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/token", "", nil, body)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	return result, nil
 }
@@ -67,7 +73,7 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 		uri = "/" + uri
 	}
 
-	url := fmt.Sprintf("http://%s%s", cc.endpoint, uri)
+	url := fmt.Sprintf("https://%s%s", cc.endpoint, uri)
 
 	if query != "" {
 		query = escapeURI(query)
@@ -75,17 +81,8 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 	}
 
 	// header
-
-	//lengthStr, ok := headers["Content-Length"]
-	//if !ok {
-	//	lengthStr = "0"
-	//}
-
 	// Content-Type:application/json
 	headers["Content-Type"] = "application/json"
-
-	// Authorization:Token xxxxxxxxxxxxxx
-	headers["Authorization"] = cc.getToken()
 
 	// GET and HEAD method have no body
 	rc, ok := value.(io.Reader)

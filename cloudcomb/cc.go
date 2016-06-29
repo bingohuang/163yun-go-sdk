@@ -12,7 +12,7 @@ const (
 
 const (
 	// defaultEndPoint: access url, support https
-	defaultEndPoint = "https://open.c.163.com"
+	defaultEndPoint = "open.c.163.com"
 
 	// defaultConnectTimeout: connection timeout when connect to cloudcomb endpoint
 	defaultConnectTimeout = 60

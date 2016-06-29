@@ -47,7 +47,7 @@ func (core *ccHTTPCore) doHTTPRequest(method, url string, headers map[string]str
 	req.Header.Set("User-Agent", makeUserAgent())
 
 	// https://code.google.com/p/go/issues/detail?id=6738
-	if method == "PUT" || method == "POSt" {
+	if method == "PUT" || method == "POST" {
 		length := req.Header.Get("Content-Length")
 		if length != "" {
 			req.ContentLength, _ = strconv.ParseInt(length, 10, 64)
