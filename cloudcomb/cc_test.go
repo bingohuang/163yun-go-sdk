@@ -13,11 +13,22 @@ var (
 	cc        = NewCC(appKey, appSecret)
 )
 
-func TestToken(t *testing.T) {
-	if res, err := cc.UserToken(); err != nil {
+func TestCloudComb_UserToken(t *testing.T) {
+	if token, expiresIn, err := cc.UserToken(); err != nil {
 		fmt.Println(err)
-		t.Errorf("failt to get token. %v", err)
+		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get token: %s\n", res)
+		fmt.Printf("Get token=%s and expires_in=%d\n", token, expiresIn)
+		cc.Token = token
 	}
+}
+
+func TestCloudComb_ContainersImages(t *testing.T) {
+	if res, err := cc.ContainersImages(); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n", res)
+	}
+
 }

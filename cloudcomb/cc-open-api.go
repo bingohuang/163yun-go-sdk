@@ -2,14 +2,9 @@ package cloudcomb
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-	"strings"
 	"encoding/json"
+	"net/http"
+	"strings"
 )
 
 // Cloudcomb Open API Client
@@ -23,12 +18,7 @@ type CloudComb struct {
 	Expires   int
 }
 
-// Generate API token request payload
-type UserToken struct {
-	AppKey    string `json:"app_key"`
-	AppSecret string `json:"app_secret"`
-}
-
+// New CloudComb
 func NewCC(appKey, appSecret string) *CloudComb {
 	cc := &CloudComb{
 		appKey:    appKey,
@@ -46,75 +36,53 @@ func (cc *CloudComb) getToken() (token string) {
 	return "token " + cc.Token
 }
 
-func (cc *CloudComb) UserToken() (string, error) {
-	ut := UserToken {
+// Get user's token
+func (cc *CloudComb) UserToken() (string, uint64, error) {
+	// user token request params
+	type UserTokenReq struct {
+		AppKey    string `json:"app_key"`
+		AppSecret string `json:"app_secret"`
+	}
+	utq := UserTokenReq {
 		AppKey: cc.appKey,
 		AppSecret: cc.appSecret,
 	}
 
+	// generate json
 	body := new(bytes.Buffer)
-	json.NewEncoder(body).Encode(ut)
+	json.NewEncoder(body).Encode(utq)
 
 	result, _, err := cc.doRESTRequest("POST", "/api/v1/token", "", nil, body)
 	if err != nil {
+		return "", 0, err
+	}
+
+	// user token response messages
+	type UserTokenRes struct {
+		Token    string `json:"token"`
+		ExpiresIn uint64 `json:"expires_in"`
+	}
+	var uts UserTokenRes
+
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&uts); err != nil {
+		return "", 0, err
+	}
+
+	return uts.Token, uts.ExpiresIn, nil
+}
+
+// List containers' images
+func (cc *CloudComb) ContainersImages() (string, error)   {
+	headers := make(map[string]string)
+	// Authorization:Token xxxxxxxxxxxxxx
+	headers["Authorization"] = "Token " + cc.Token
+
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", headers, nil)
+	if err != nil {
 		return "", err
 	}
+
 	return result, nil
 }
 
-func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string]string,
-	value interface{}) (result string, rtHeaders http.Header, err error) {
-	if headers == nil {
-		headers = make(map[string]string)
-	}
-
-	// Normalize url
-	if !strings.HasPrefix(uri, "/") {
-		uri = "/" + uri
-	}
-
-	url := fmt.Sprintf("https://%s%s", cc.endpoint, uri)
-
-	if query != "" {
-		query = escapeURI(query)
-		url += "?" + query
-	}
-
-	// header
-	// Content-Type:application/json
-	headers["Content-Type"] = "application/json"
-
-	// GET and HEAD method have no body
-	rc, ok := value.(io.Reader)
-	if !ok || method == "GET" || method == "HEAD" {
-		rc = nil
-	}
-
-	resp, err := cc.doHTTPRequest(method, url, headers, rc)
-	if err != nil {
-		return "", nil, err
-	}
-
-	defer resp.Body.Close()
-
-	// parse response
-	// 20X
-	if (resp.StatusCode / 100) == 2 {
-		if method == "GET" && value != nil {
-			written, err := chunkedCopy(value.(io.Writer), resp.Body)
-			return strconv.FormatInt(written, 10), resp.Header, err
-		}
-		body, err := ioutil.ReadAll(resp.Body)
-		return string(body), resp.Header, err
-	}
-	// not 20X
-	if body, err := ioutil.ReadAll(resp.Body); err == nil {
-		if len(body) == 0 && (resp.StatusCode/100) != 2 {
-			return "", resp.Header, errors.New(fmt.Sprint(resp.StatusCode))
-		}
-		return "", resp.Header, errors.New(string(body))
-	} else {
-		return "", resp.Header, err
-	}
-
-}
