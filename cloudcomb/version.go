@@ -2,5 +2,5 @@ package cloudcomb
 
 var (
 	// VERSION should be updated by hand at each release
-	VERSION = "0.0.2"
+	VERSION = "0.0.3"
 )
