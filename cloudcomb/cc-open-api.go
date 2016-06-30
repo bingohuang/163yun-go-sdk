@@ -15,7 +15,7 @@ type CloudComb struct {
 	appKey    string
 	appSecret string
 	Token     string
-	ExpiresIn   int
+	ExpiresIn uint64
 }
 
 // New CloudComb
