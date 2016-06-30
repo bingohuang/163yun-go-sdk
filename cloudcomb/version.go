@@ -1,4 +1,4 @@
-package version
+package cloudcomb
 
 var (
 	// VERSION should be updated by hand at each release
