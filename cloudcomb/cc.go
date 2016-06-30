@@ -1,13 +1,10 @@
 package cloudcomb
 
 import (
+	"../version"
 	"fmt"
 	"io"
 	URL "net/url"
-)
-
-const (
-	Version = "0.0.1"
 )
 
 const (
@@ -28,7 +25,7 @@ var (
 
 // User Agent
 func makeUserAgent() string {
-	return fmt.Sprintf("CloudComb Go SDK %s", Version)
+	return fmt.Sprintf("CloudComb Go SDK %s", version.VERSION)
 }
 
 // URI escape
