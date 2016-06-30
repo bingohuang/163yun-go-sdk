@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"github.com/syndtr/goleveldb/leveldb/errors"
 )
 
 // Cloudcomb Open API Client
@@ -32,6 +33,7 @@ func NewCC(appKey, appSecret string) *CloudComb {
 	return cc
 }
 
+/*=== user start 1 ===*/
 // Get user's token
 func (cc *CloudComb) UserToken() (string, uint64, error) {
 	// user token request params
@@ -67,8 +69,10 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 
 	return uts.Token, uts.ExpiresIn, nil
 }
+/*=== user end ===*/
 
-// List containers' images
+/*=== containers start 9 ===*/
+// list all containers' images
 func (cc *CloudComb) ContainersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", nil, nil)
 	if err != nil {
@@ -78,8 +82,13 @@ func (cc *CloudComb) ContainersImages() (string, error) {
 	return result, nil
 }
 
-// List containers
+// TODO: create container
+
+// TODO: update container
+
+// list all containers' info
 func (cc *CloudComb) Containers() (string, error) {
+	// TODO: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -87,3 +96,143 @@ func (cc *CloudComb) Containers() (string, error) {
 
 	return result, nil
 }
+
+// check specified container's info
+func (cc *CloudComb) Container(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Miss container id")
+	}
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/" + id, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// TODO: delete container
+
+// TODO: restart container
+
+// TODO: tag container to a image
+
+// Get specified container's flow
+func (cc *CloudComb) ContainerFlow(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Miss container id")
+	}
+	// TODO: from_time=1111&to_time=111111
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/" + id + "/flow", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+/*=== containers end ===*/
+
+/*=== clusters(apps) start 8 ===*/
+// list all cluster's images
+func (cc *CloudComb) ClustersImages() (string, error) {
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/images", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// TODO: create cluster
+
+// TODO: update cluster
+
+// list clustersv
+func (cc *CloudComb) Clusters() (string, error) {
+	// TODO: limit=20&offset=0
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get cluster
+func (cc *CloudComb) Cluster(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Miss cluster id")
+	}
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/" + id, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// TODO: delete cluster
+
+// TODO: replicate cluster
+
+// TODO" watch cluster
+/*=== clusters(apps) end ===*/
+
+/*=== repositories start 4 ===*/
+// list repositories
+func (cc *CloudComb) Repositories() (string, error) {
+	// TODO: limit=20&offset=0
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get repository
+func (cc *CloudComb) Repository(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Miss repository id")
+	}
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories/" + id, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+
+// TODO: create repository
+// TODO: delete repository
+/*=== repositories end ===*/
+
+/*=== secret-keys start 4 ===*/
+
+// list secret keys
+func (cc *CloudComb) SecretKeys() (string, error) {
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/secret-keys", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get secret key
+func (cc *CloudComb) SecretKey(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Miss secret key id")
+	}
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/secret-keys/" + id, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// TODO: create secret key
+
+// TODO: delete secret key
+/*=== secret-keys end ===*/

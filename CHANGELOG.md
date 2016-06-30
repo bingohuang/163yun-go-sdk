@@ -1,4 +1,14 @@
-# CloucComb Go SDK ChangeLog
+# CloudComb Go SDK ChangeLog
+
+## Version 0.0.3 (2016.06.30)
+
+### features
+
+1. add several container api
+2. add several cluster api
+3. app several repository api
+4. add several secret key api
+5. add several test function
 
 ## Version 0.0.2 (2016.06.29)
 
