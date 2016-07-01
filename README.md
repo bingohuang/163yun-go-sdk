@@ -1,5 +1,5 @@
-网易蜂巢 OpenAPI Go SDK
-===
+网易蜂巢 [OpenAPI](https://c.163.com/wiki/index.php?title=OpenAPI%E4%BB%8B%E7%BB%8D) Go SDK
+=======================================================================================
 
 
 ## `简介`

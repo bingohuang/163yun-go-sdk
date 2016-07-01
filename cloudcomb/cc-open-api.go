@@ -82,10 +82,6 @@ func (cc *CloudComb) ContainersImages() (string, error) {
 	return result, nil
 }
 
-// TODO: create container
-
-// TODO: update container
-
 // list all containers' info
 func (cc *CloudComb) Containers() (string, error) {
 	// TODO: limit=20&offset=0
@@ -97,7 +93,7 @@ func (cc *CloudComb) Containers() (string, error) {
 	return result, nil
 }
 
-// check specified container's info
+// Get specified container's info
 func (cc *CloudComb) Container(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Miss container id")
@@ -109,12 +105,6 @@ func (cc *CloudComb) Container(id string) (string, error) {
 
 	return result, nil
 }
-
-// TODO: delete container
-
-// TODO: restart container
-
-// TODO: tag container to a image
 
 // Get specified container's flow
 func (cc *CloudComb) ContainerFlow(id string) (string, error) {
@@ -129,10 +119,20 @@ func (cc *CloudComb) ContainerFlow(id string) (string, error) {
 
 	return result, nil
 }
+
+// TODO: create container
+
+// TODO: update container
+
+// TODO: delete container
+
+// TODO: restart container
+
+// TODO: tag a container to a image
 /*=== containers end ===*/
 
 /*=== clusters(apps) start 8 ===*/
-// list all cluster's images
+// list all clusters' images
 func (cc *CloudComb) ClustersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/images", "", nil, nil)
 	if err != nil {
@@ -142,11 +142,7 @@ func (cc *CloudComb) ClustersImages() (string, error) {
 	return result, nil
 }
 
-// TODO: create cluster
-
-// TODO: update cluster
-
-// list clustersv
+// list clusters
 func (cc *CloudComb) Clusters() (string, error) {
 	// TODO: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps", "", nil, nil)
@@ -169,6 +165,10 @@ func (cc *CloudComb) Cluster(id string) (string, error) {
 
 	return result, nil
 }
+
+// TODO: create cluster
+
+// TODO: update cluster
 
 // TODO: delete cluster
 
