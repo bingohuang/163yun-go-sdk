@@ -3,9 +3,9 @@ package cloudcomb
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
-	"github.com/syndtr/goleveldb/leveldb/errors"
 )
 
 // Cloudcomb Open API Client
@@ -69,6 +69,7 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 
 	return uts.Token, uts.ExpiresIn, nil
 }
+
 /*=== user end ===*/
 
 /*=== containers start 9 ===*/
@@ -98,7 +99,7 @@ func (cc *CloudComb) Container(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Miss container id")
 	}
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/" + id, "", nil, nil)
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/"+id, "", nil, nil)
 	if err != nil {
 		return "", err
 	}
@@ -112,7 +113,7 @@ func (cc *CloudComb) ContainerFlow(id string) (string, error) {
 		return "", errors.New("Miss container id")
 	}
 	// TODO: from_time=1111&to_time=111111
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/" + id + "/flow", "", nil, nil)
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/"+id+"/flow", "", nil, nil)
 	if err != nil {
 		return "", err
 	}
@@ -158,7 +159,7 @@ func (cc *CloudComb) Cluster(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Miss cluster id")
 	}
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/" + id, "", nil, nil)
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/"+id, "", nil, nil)
 	if err != nil {
 		return "", err
 	}
@@ -194,14 +195,13 @@ func (cc *CloudComb) Repository(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Miss repository id")
 	}
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories/" + id, "", nil, nil)
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories/"+id, "", nil, nil)
 	if err != nil {
 		return "", err
 	}
 
 	return result, nil
 }
-
 
 // TODO: create repository
 // TODO: delete repository
@@ -224,7 +224,7 @@ func (cc *CloudComb) SecretKey(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Miss secret key id")
 	}
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/secret-keys/" + id, "", nil, nil)
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/secret-keys/"+id, "", nil, nil)
 	if err != nil {
 		return "", err
 	}
