@@ -88,6 +88,7 @@ func TestCloudComb_Cluster(t *testing.T) {
 		fmt.Printf("Get response: %s\n", res)
 	}
 }
+
 /*=== repositories start 4 ===*/
 func TestCloudComb_Repositories(t *testing.T) {
 	if res, err := cc.Repositories(); err != nil {
