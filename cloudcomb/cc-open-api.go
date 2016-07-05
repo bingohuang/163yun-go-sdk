@@ -97,7 +97,7 @@ func (cc *CloudComb) Containers() (string, error) {
 // Get specified container's info
 func (cc *CloudComb) Container(id string) (string, error) {
 	if id == "" {
-		return "", errors.New("Miss container id")
+		return "", errors.New("Container id is missed")
 	}
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/"+id, "", nil, nil)
 	if err != nil {
@@ -110,7 +110,7 @@ func (cc *CloudComb) Container(id string) (string, error) {
 // Get specified container's flow
 func (cc *CloudComb) ContainerFlow(id string) (string, error) {
 	if id == "" {
-		return "", errors.New("Miss container id")
+		return "", errors.New("Container id is missed")
 	}
 	// TODO: from_time=1111&to_time=111111
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/"+id+"/flow", "", nil, nil)
@@ -122,6 +122,7 @@ func (cc *CloudComb) ContainerFlow(id string) (string, error) {
 }
 
 // TODO: create container
+
 
 // TODO: update container
 
@@ -157,7 +158,7 @@ func (cc *CloudComb) Clusters() (string, error) {
 // get cluster
 func (cc *CloudComb) Cluster(id string) (string, error) {
 	if id == "" {
-		return "", errors.New("Miss cluster id")
+		return "", errors.New("Cluster id is missed")
 	}
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/"+id, "", nil, nil)
 	if err != nil {
@@ -193,7 +194,7 @@ func (cc *CloudComb) Repositories() (string, error) {
 // get repository
 func (cc *CloudComb) Repository(id string) (string, error) {
 	if id == "" {
-		return "", errors.New("Miss repository id")
+		return "", errors.New("Repository id is missed")
 	}
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories/"+id, "", nil, nil)
 	if err != nil {
@@ -222,7 +223,7 @@ func (cc *CloudComb) SecretKeys() (string, error) {
 // get secret key
 func (cc *CloudComb) SecretKey(id string) (string, error) {
 	if id == "" {
-		return "", errors.New("Miss secret key id")
+		return "", errors.New("Secret key id is missed")
 	}
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/secret-keys/"+id, "", nil, nil)
 	if err != nil {
