@@ -10,13 +10,18 @@ import (
 
 // Cloudcomb Open API Client
 type CloudComb struct {
-	//core
 	ccHTTPCore
 
 	appKey    string
 	appSecret string
 	Token     string
 	ExpiresIn uint64
+
+	Container
+}
+
+type Container struct {
+	ContainerID string
 }
 
 // New CloudComb
@@ -35,21 +40,25 @@ func NewCC(appKey, appSecret string) *CloudComb {
 
 /*=== user start 1 ===*/
 // Get user's token
-func (cc *CloudComb) PostUserToken() (string, uint64, error) {
+func (cc *CloudComb) UserToken() (string, uint64, error) {
 	// user token request params
 	type userTokenReq struct {
 		AppKey    string `json:"app_key"`
 		AppSecret string `json:"app_secret"`
 	}
-	utq := userTokenReq{
+	req := userTokenReq{
 		AppKey:    cc.appKey,
 		AppSecret: cc.appSecret,
 	}
 
-	// generate json
+	// generate json body
 	body := new(bytes.Buffer)
-	json.NewEncoder(body).Encode(utq)
+	err := json.NewEncoder(body).Encode(req)
+	if err != nil {
+		return "", 0, err
+	}
 
+	// do rest request
 	result, _, err := cc.doRESTRequest("POST", "/api/v1/token", "", nil, body)
 	if err != nil {
 		return "", 0, err
@@ -60,14 +69,14 @@ func (cc *CloudComb) PostUserToken() (string, uint64, error) {
 		Token     string `json:"token"`
 		ExpiresIn uint64 `json:"expires_in"`
 	}
-	var uts userTokenRes
+	var res userTokenRes
 
 	// parse json
-	if err := json.NewDecoder(strings.NewReader(result)).Decode(&uts); err != nil {
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
 		return "", 0, err
 	}
 
-	return uts.Token, uts.ExpiresIn, nil
+	return res.Token, res.ExpiresIn, nil
 }
 
 /*=== user end ===*/
@@ -121,16 +130,114 @@ func (cc *CloudComb) GetContainerFlow(id string) (string, error) {
 	return result, nil
 }
 
-// TODO: create container
+// create container
+func (cc *CloudComb) CreateContainer(params string) (uint64, error) {
+	if params == "" {
+		return 0, errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
 
+	body := bytes.NewBufferString(params)
 
-// TODO: update container
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/containers", "", nil, body)
+	if err != nil {
+		return 0, err
+	}
 
-// TODO: delete container
+	// create container response messages
+	type createContainerRes struct {
+		Id uint64 `json:"id"`
+	}
+	var res createContainerRes
 
-// TODO: restart container
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return 0, err
+	}
 
-// TODO: tag a container to a image
+	return res.Id, nil
+}
+
+// update container
+func (cc *CloudComb) UpdateContainer(id string, params string) error {
+	if id == "" {
+		return errors.New("Container id is missed")
+	}
+	if params == "" {
+		return errors.New("Params is missed")
+	}
+
+	params = PurifyParams(params)
+
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	_, _, err := cc.doRESTRequest("PUT", "/api/v1/containers/"+id, "", nil, body)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// restart container
+func (cc *CloudComb) RestartContainer(id string) error {
+	if id == "" {
+		return errors.New("Container id is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("PUT", "/api/v1/containers/"+id+"/actions/restart", "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// tag a container to a image
+func (cc *CloudComb) TagContainer(id string, params string) (string, error) {
+	if id == "" {
+		return "", errors.New("Container id is missed")
+	}
+	if params == "" {
+		return "", errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
+
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/containers/"+id+"/tag", "", nil, body)
+	if err != nil {
+		return "", err
+	}
+
+	// create container response messages
+	type tagContainerRes struct {
+		ImageId string `json:"image_id"`
+	}
+	var res tagContainerRes
+
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return "", err
+	}
+
+	return res.ImageId, nil
+}
+
+// delete container
+func (cc *CloudComb) DeleteContainer(id string) error {
+	if id == "" {
+		return errors.New("Container id is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("DELETE", "/api/v1/containers/"+id, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*=== containers end ===*/
 
 /*=== clusters(apps) start 8 ===*/

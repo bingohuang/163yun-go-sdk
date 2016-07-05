@@ -1,5 +1,13 @@
 # CloudComb Go SDK ChangeLog
 
+## Version 0.0.4 (2016.07.05)
+
+### features
+
+1. finish container relate api
+2. add several container test function
+
+
 ## Version 0.0.3 (2016.06.30)
 
 ### features

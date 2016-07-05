@@ -35,6 +35,13 @@ func (core *ccHTTPCore) SetTimeout(timeout int) {
 	}
 }
 
+// purify params by "\n", "\t"
+func PurifyParams(params string) string  {
+	params = strings.Replace(params, "\n", "", -1)
+	params = strings.Replace(params, "\t", "", -1)
+	return params
+}
+
 // do http request
 func (core *ccHTTPCore) doHTTPRequest(method, url string, headers map[string]string,
 	body io.Reader) (resp *http.Response, err error) {
