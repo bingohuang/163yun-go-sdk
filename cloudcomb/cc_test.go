@@ -14,8 +14,8 @@ var (
 )
 
 /*=== user start 1 ===*/
-func TestCloudComb_UserToken(t *testing.T) {
-	if token, expiresIn, err := cc.UserToken(); err != nil {
+func TestCloudComb_PostUserToken(t *testing.T) {
+	if token, expiresIn, err := cc.PostUserToken(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -25,8 +25,8 @@ func TestCloudComb_UserToken(t *testing.T) {
 }
 
 /*=== containers start 9 ===*/
-func TestCloudComb_ContainersImages(t *testing.T) {
-	if res, err := cc.ContainersImages(); err != nil {
+func TestCloudComb_GetContainersImages(t *testing.T) {
+	if res, err := cc.GetContainersImages(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -34,8 +34,8 @@ func TestCloudComb_ContainersImages(t *testing.T) {
 	}
 }
 
-func TestCloudComb_Containers(t *testing.T) {
-	if res, err := cc.Containers(); err != nil {
+func TestCloudComb_GetContainers(t *testing.T) {
+	if res, err := cc.GetContainers(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -43,8 +43,8 @@ func TestCloudComb_Containers(t *testing.T) {
 	}
 }
 
-func TestCloudComb_Container(t *testing.T) {
-	if res, err := cc.Container("274320"); err != nil {
+func TestCloudComb_GetContainer(t *testing.T) {
+	if res, err := cc.GetContainer("274320"); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -52,8 +52,8 @@ func TestCloudComb_Container(t *testing.T) {
 	}
 }
 
-func TestCloudComb_ContainerFlow(t *testing.T) {
-	if res, err := cc.ContainerFlow("274320"); err != nil {
+func TestCloudComb_GetContainerFlow(t *testing.T) {
+	if res, err := cc.GetContainerFlow("274320"); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -62,8 +62,8 @@ func TestCloudComb_ContainerFlow(t *testing.T) {
 }
 
 /*=== clusters(apps) start 8 ===*/
-func TestCloudComb_ClustersImages(t *testing.T) {
-	if res, err := cc.ClustersImages(); err != nil {
+func TestCloudComb_GetClustersImages(t *testing.T) {
+	if res, err := cc.GetClustersImages(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -71,8 +71,8 @@ func TestCloudComb_ClustersImages(t *testing.T) {
 	}
 }
 
-func TestCloudComb_Clusters(t *testing.T) {
-	if res, err := cc.Clusters(); err != nil {
+func TestCloudComb_GetClusters(t *testing.T) {
+	if res, err := cc.GetClusters(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -80,8 +80,8 @@ func TestCloudComb_Clusters(t *testing.T) {
 	}
 }
 
-func TestCloudComb_Cluster(t *testing.T) {
-	if res, err := cc.Cluster("413529"); err != nil {
+func TestCloudComb_GetCluster(t *testing.T) {
+	if res, err := cc.GetCluster("413529"); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -90,8 +90,8 @@ func TestCloudComb_Cluster(t *testing.T) {
 }
 
 /*=== repositories start 4 ===*/
-func TestCloudComb_Repositories(t *testing.T) {
-	if res, err := cc.Repositories(); err != nil {
+func TestCloudComb_GetRepositories(t *testing.T) {
+	if res, err := cc.GetRepositories(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -99,8 +99,8 @@ func TestCloudComb_Repositories(t *testing.T) {
 	}
 }
 
-func TestCloudComb_Repository(t *testing.T) {
-	if res, err := cc.Repository("22103"); err != nil {
+func TestCloudComb_GetRepository(t *testing.T) {
+	if res, err := cc.GetRepository("22103"); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -109,8 +109,8 @@ func TestCloudComb_Repository(t *testing.T) {
 }
 
 /*=== secret-keys start 4 ===*/
-func TestCloudComb_SecretKeys(t *testing.T) {
-	if res, err := cc.SecretKeys(); err != nil {
+func TestCloudComb_GetSecretKeys(t *testing.T) {
+	if res, err := cc.GetSecretKeys(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -118,8 +118,8 @@ func TestCloudComb_SecretKeys(t *testing.T) {
 	}
 }
 
-func TestCloudComb_SecretKey(t *testing.T) {
-	if res, err := cc.SecretKey("196"); err != nil {
+func TestCloudComb_GetSecretKey(t *testing.T) {
+	if res, err := cc.GetSecretKey("196"); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {

@@ -35,7 +35,7 @@ func NewCC(appKey, appSecret string) *CloudComb {
 
 /*=== user start 1 ===*/
 // Get user's token
-func (cc *CloudComb) UserToken() (string, uint64, error) {
+func (cc *CloudComb) PostUserToken() (string, uint64, error) {
 	// user token request params
 	type userTokenReq struct {
 		AppKey    string `json:"app_key"`
@@ -74,7 +74,7 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 
 /*=== containers start 9 ===*/
 // list all containers' images
-func (cc *CloudComb) ContainersImages() (string, error) {
+func (cc *CloudComb) GetContainersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -84,7 +84,7 @@ func (cc *CloudComb) ContainersImages() (string, error) {
 }
 
 // list all containers' info
-func (cc *CloudComb) Containers() (string, error) {
+func (cc *CloudComb) GetContainers() (string, error) {
 	// TODO: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers", "", nil, nil)
 	if err != nil {
@@ -95,7 +95,7 @@ func (cc *CloudComb) Containers() (string, error) {
 }
 
 // Get specified container's info
-func (cc *CloudComb) Container(id string) (string, error) {
+func (cc *CloudComb) GetContainer(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Container id is missed")
 	}
@@ -108,7 +108,7 @@ func (cc *CloudComb) Container(id string) (string, error) {
 }
 
 // Get specified container's flow
-func (cc *CloudComb) ContainerFlow(id string) (string, error) {
+func (cc *CloudComb) GetContainerFlow(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Container id is missed")
 	}
@@ -135,7 +135,7 @@ func (cc *CloudComb) ContainerFlow(id string) (string, error) {
 
 /*=== clusters(apps) start 8 ===*/
 // list all clusters' images
-func (cc *CloudComb) ClustersImages() (string, error) {
+func (cc *CloudComb) GetClustersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/images", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -145,7 +145,7 @@ func (cc *CloudComb) ClustersImages() (string, error) {
 }
 
 // list clusters
-func (cc *CloudComb) Clusters() (string, error) {
+func (cc *CloudComb) GetClusters() (string, error) {
 	// TODO: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps", "", nil, nil)
 	if err != nil {
@@ -156,7 +156,7 @@ func (cc *CloudComb) Clusters() (string, error) {
 }
 
 // get cluster
-func (cc *CloudComb) Cluster(id string) (string, error) {
+func (cc *CloudComb) GetCluster(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Cluster id is missed")
 	}
@@ -181,7 +181,7 @@ func (cc *CloudComb) Cluster(id string) (string, error) {
 
 /*=== repositories start 4 ===*/
 // list repositories
-func (cc *CloudComb) Repositories() (string, error) {
+func (cc *CloudComb) GetRepositories() (string, error) {
 	// TODO: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories", "", nil, nil)
 	if err != nil {
@@ -192,7 +192,7 @@ func (cc *CloudComb) Repositories() (string, error) {
 }
 
 // get repository
-func (cc *CloudComb) Repository(id string) (string, error) {
+func (cc *CloudComb) GetRepository(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Repository id is missed")
 	}
@@ -211,7 +211,7 @@ func (cc *CloudComb) Repository(id string) (string, error) {
 /*=== secret-keys start 4 ===*/
 
 // list secret keys
-func (cc *CloudComb) SecretKeys() (string, error) {
+func (cc *CloudComb) GetSecretKeys() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/secret-keys", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -221,7 +221,7 @@ func (cc *CloudComb) SecretKeys() (string, error) {
 }
 
 // get secret key
-func (cc *CloudComb) SecretKey(id string) (string, error) {
+func (cc *CloudComb) GetSecretKey(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Secret key id is missed")
 	}
