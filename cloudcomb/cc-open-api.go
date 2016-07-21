@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -14,14 +15,36 @@ type CloudComb struct {
 
 	appKey    string
 	appSecret string
-	Token     string
-	ExpiresIn uint64
+
+	User
 
 	Container
+
+	Cluster
+
+	Repository
+
+	SecretKey
+}
+
+type User struct {
+	Token string
 }
 
 type Container struct {
 	ContainerID string
+}
+
+type Cluster struct {
+	ClusterID string
+}
+
+type Repository struct {
+	RepositoryID string
+}
+
+type SecretKey struct {
+	SecretKeyID string
 }
 
 // New CloudComb
@@ -40,7 +63,7 @@ func NewCC(appKey, appSecret string) *CloudComb {
 
 /*=== user start 1 ===*/
 // Get user's token
-func (cc *CloudComb) UserToken() (string, uint64, error) {
+func (cc *CloudComb) UserToken() (string, uint, error) {
 	// user token request params
 	type userTokenReq struct {
 		AppKey    string `json:"app_key"`
@@ -67,7 +90,7 @@ func (cc *CloudComb) UserToken() (string, uint64, error) {
 	// user token response messages
 	type userTokenRes struct {
 		Token     string `json:"token"`
-		ExpiresIn uint64 `json:"expires_in"`
+		ExpiresIn uint   `json:"expires_in"`
 	}
 	var res userTokenRes
 
@@ -94,7 +117,7 @@ func (cc *CloudComb) GetContainersImages() (string, error) {
 
 // list all containers' info
 func (cc *CloudComb) GetContainers() (string, error) {
-	// TODO: limit=20&offset=0
+	// TODO query: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -121,7 +144,7 @@ func (cc *CloudComb) GetContainerFlow(id string) (string, error) {
 	if id == "" {
 		return "", errors.New("Container id is missed")
 	}
-	// TODO: from_time=1111&to_time=111111
+	// TODO query: from_time=1111&to_time=111111
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/"+id+"/flow", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -131,7 +154,7 @@ func (cc *CloudComb) GetContainerFlow(id string) (string, error) {
 }
 
 // create container
-func (cc *CloudComb) CreateContainer(params string) (uint64, error) {
+func (cc *CloudComb) CreateContainer(params string) (uint, error) {
 	if params == "" {
 		return 0, errors.New("Params is missed")
 	}
@@ -147,7 +170,7 @@ func (cc *CloudComb) CreateContainer(params string) (uint64, error) {
 
 	// create container response messages
 	type createContainerRes struct {
-		Id uint64 `json:"id"`
+		Id uint `json:"id"`
 	}
 	var res createContainerRes
 
@@ -253,7 +276,7 @@ func (cc *CloudComb) GetClustersImages() (string, error) {
 
 // list clusters
 func (cc *CloudComb) GetClusters() (string, error) {
-	// TODO: limit=20&offset=0
+	// TODO query: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -275,21 +298,103 @@ func (cc *CloudComb) GetCluster(id string) (string, error) {
 	return result, nil
 }
 
-// TODO: create cluster
+// create cluster
+func (cc *CloudComb) CreateCluster(params string) (uint, string, error) {
+	if params == "" {
+		return 0, "", errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
 
-// TODO: update cluster
+	body := bytes.NewBufferString(params)
 
-// TODO: delete cluster
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/apps", "", nil, body)
+	if err != nil {
+		return 0, "", err
+	}
 
-// TODO: replicate cluster
+	// create cluster response messages
+	type createClusterRes struct {
+		Id  uint   `json:"id"`
+		Url string `json:"url"`
+	}
+	var res createClusterRes
 
-// TODO" watch cluster
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return 0, "", err
+	}
+
+	return res.Id, res.Url, nil
+}
+
+// update cluster
+func (cc *CloudComb) UpdateCluster(id string, params string) error {
+	if id == "" {
+		return errors.New("Cluster id is missed")
+	}
+	if params == "" {
+		return errors.New("Params is missed")
+	}
+
+	params = PurifyParams(params)
+
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	_, _, err := cc.doRESTRequest("PUT", "/api/v1/apps/"+id, "", nil, body)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// replicate cluster
+func (cc *CloudComb) ReplicateCluster(id string, replicas int) error {
+	if id == "" {
+		return errors.New("Cluster id is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("PUT", "/api/v1/apps/"+id+"/replications/"+strconv.Itoa(replicas)+"/actions/resize", "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// watch cluster
+func (cc *CloudComb) WatchCluster(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Cluster id is missed")
+	}
+	// support long connection
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/watch/apps/"+id, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// delete cluster
+func (cc *CloudComb) DeleteCluster(id string) error {
+	if id == "" {
+		return errors.New("Cluster id is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("DELETE", "/api/v1/apps/"+id, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*=== clusters(apps) end ===*/
 
 /*=== repositories start 4 ===*/
 // list repositories
 func (cc *CloudComb) GetRepositories() (string, error) {
-	// TODO: limit=20&offset=0
+	// TODO query: limit=20&offset=0
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/repositories", "", nil, nil)
 	if err != nil {
 		return "", err
@@ -311,8 +416,42 @@ func (cc *CloudComb) GetRepository(id string) (string, error) {
 	return result, nil
 }
 
-// TODO: create repository
-// TODO: delete repository
+// create repository
+func (cc *CloudComb) CreateRepository(repoName string, tag string, path string) error {
+	if repoName == "" {
+		return errors.New("Repository repoName is missed")
+	}
+	if tag == "" {
+		return errors.New("Repository tag is missed")
+	}
+	if path == "" {
+		return errors.New("Repository file path is missed")
+	}
+
+	_, _, err := cc.doFormRequest("/api/v1/repositories/"+repoName+"/tags/"+tag+"/actions/build", nil, "docker_file", path)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// delete repository
+func (cc *CloudComb) DeleteRepository(repoName string, tag string) error {
+	if repoName == "" {
+		return errors.New("Repository repoName is missed")
+	}
+	if tag == "" {
+		return errors.New("Repository tag is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("DELETE", "/api/v1/repositories/"+repoName+"/tags/"+tag, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*=== repositories end ===*/
 
 /*=== secret-keys start 4 ===*/
@@ -340,7 +479,49 @@ func (cc *CloudComb) GetSecretKey(id string) (string, error) {
 	return result, nil
 }
 
-// TODO: create secret key
+// create secret key
+func (cc *CloudComb) CreateSecretKey(params string) (uint, string, error) {
+	if params == "" {
+		return 0, "", errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
 
-// TODO: delete secret key
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/secret-keys", "", nil, body)
+	if err != nil {
+		return 0, "", err
+	}
+
+	// create cluster response messages
+	type createSecretKeyRes struct {
+		Id          uint   `json:"id"`
+		Name        string `json:"name"`
+		FingerPrint string `json:"fingerprint"`
+		CreatedAt   string `json:"created_at"`
+	}
+	var res createSecretKeyRes
+
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return 0, "", err
+	}
+
+	return res.Id, res.Name, nil
+}
+
+// delete secret key
+func (cc *CloudComb) DeleteSecretKey(id string) error {
+	if id == "" {
+		return errors.New("Secret key id is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("DELETE", "/api/v1/secret-keys/"+id, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*=== secret-keys end ===*/

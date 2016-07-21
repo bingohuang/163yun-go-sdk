@@ -3,9 +3,9 @@ package cloudcomb
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 	"time"
-	"strconv"
 )
 
 // run go test by: CC_APPKEY="your app key" CC_APPSECRET="your app secret" go test -v
@@ -13,6 +13,9 @@ var (
 	appKey    = os.Getenv("CC_APPKEY")
 	appSecret = os.Getenv("CC_APPSECRET")
 	cc        = NewCC(appKey, appSecret)
+	repoName  = "openapi"
+	tag       = "test"
+	filePath  = "Dockerfile"
 )
 
 /*=== user start 1 ===*/
@@ -21,7 +24,7 @@ func TestCloudComb_UserToken(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get token=%s and expires_in=%d\n", token, expiresIn)
+		fmt.Printf("Get token=%s and expires_in=%d\n\n", token, expiresIn)
 		cc.Token = token
 	}
 }
@@ -33,7 +36,7 @@ func TestCloudComb_GetContainersImages(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
@@ -55,13 +58,12 @@ func TestCloudComb_CreateContainer(t *testing.T) {
 				"bandwidth": 1
 			  }`
 	params = fmt.Sprintf(params, 1, 20835, "openapitest", "cloudcomb open api test container", "[]")
-	fmt.Printf("params: %s\n", params)
 	if res, err := cc.CreateContainer(params); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %d\n", res)
-		cc.ContainerID = strconv.FormatUint(res, 10)
+		fmt.Printf("Get response: %d\n\n", res)
+		cc.ContainerID = strconv.FormatUint(uint64(res), 10)
 		time.Sleep(time.Second * 60)
 	}
 }
@@ -71,7 +73,7 @@ func TestCloudComb_GetContainers(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
@@ -80,7 +82,7 @@ func TestCloudComb_GetContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
@@ -89,7 +91,7 @@ func TestCloudComb_GetContainerFlow(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
@@ -104,7 +106,7 @@ func TestCloudComb_TagContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
@@ -121,7 +123,7 @@ func TestCloudComb_UpdateContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Update success\n")
+		fmt.Printf("Update success. \n\n")
 		time.Sleep(time.Second * 10)
 	}
 }
@@ -131,7 +133,7 @@ func TestCloudComb_RestartContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Restart success\n")
+		fmt.Printf("Restart success. \n\n")
 		time.Sleep(time.Second * 30)
 	}
 }
@@ -141,7 +143,7 @@ func TestCloudComb_DeleteContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Delete success\n")
+		fmt.Printf("Delete success. \n\n")
 	}
 }
 
@@ -151,7 +153,7 @@ func TestCloudComb_GetClustersImages(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
@@ -160,16 +162,81 @@ func TestCloudComb_GetClusters(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_CreateCluster(t *testing.T) {
+	params := `{
+				"name": "%s",
+				"image_type": %d,
+				"image_id": %d,
+				"spec_id": %d
+			  }`
+	params = fmt.Sprintf(params, "openapiCluster", 2, 38851, 1)
+	if id, url, err := cc.CreateCluster(params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get Cluster: id=%d, url=%s\n\n", id, url)
+		cc.ClusterID = strconv.FormatUint(uint64(id), 10)
+		time.Sleep(time.Second * 60)
 	}
 }
 
 func TestCloudComb_GetCluster(t *testing.T) {
-	if res, err := cc.GetCluster("413529"); err != nil {
+	if res, err := cc.GetCluster(cc.ClusterID); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_UpdateCluster(t *testing.T) {
+	params := `{
+	  "desc": "%s"
+	}`
+	params = fmt.Sprintf(params, "Modify description")
+	if err := cc.UpdateCluster(cc.ClusterID, params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Update success. \n\n")
+		time.Sleep(time.Second * 30)
+	}
+}
+
+func TestCloudComb_ReplicateCluster(t *testing.T) {
+	if err := cc.ReplicateCluster(cc.ClusterID, 2); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Replicate success. \n\n")
+		time.Sleep(time.Second * 10)
+	}
+}
+
+func TestCloudComb_WatchCluster(t *testing.T) {
+	// fixme: goroutine to watch the result, but not useful
+	go watchCluster(t)
+}
+
+func watchCluster(t *testing.T) {
+	if res, err := cc.WatchCluster(cc.ClusterID); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_DeleteCluster(t *testing.T) {
+	if err := cc.DeleteCluster(cc.ClusterID); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Delete success.\n\n")
 	}
 }
 
@@ -179,16 +246,37 @@ func TestCloudComb_GetRepositories(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
 	}
 }
 
-func TestCloudComb_GetRepository(t *testing.T) {
-	if res, err := cc.GetRepository("22103"); err != nil {
+func TestCloudComb_CreateRepository(t *testing.T) {
+	if err := cc.CreateRepository(repoName, tag, filePath); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Create success. \n\n")
+	}
+	time.Sleep(time.Second * 30)
+}
+
+func TestCloudComb_GetRepository(t *testing.T) {
+	// can not get repository id from CreateRepository
+	// get from another exist repository
+	if res, err := cc.GetRepository("93"); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_DeleteRepository(t *testing.T) {
+	if err := cc.DeleteRepository(repoName, tag); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Delete success. \n\n")
 	}
 }
 
@@ -198,15 +286,39 @@ func TestCloudComb_GetSecretKeys(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_CreateSecretKey(t *testing.T) {
+	params := `{
+				"key_name": "%s"
+			  }`
+	params = fmt.Sprintf(params, "OpenAPI")
+	if id, name, err := cc.CreateSecretKey(params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get Secret Key: id=%d, name=%s\n\n", id, name)
+		cc.SecretKeyID = strconv.FormatUint(uint64(id), 10)
+		time.Sleep(time.Second * 1)
 	}
 }
 
 func TestCloudComb_GetSecretKey(t *testing.T) {
-	if res, err := cc.GetSecretKey("196"); err != nil {
+	if res, err := cc.GetSecretKey(cc.SecretKeyID); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get response: %s\n", res)
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_DeleteSecretKey(t *testing.T) {
+	if err := cc.DeleteSecretKey(cc.SecretKeyID); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Delete success. \n\n")
 	}
 }

@@ -1,12 +1,16 @@
 package cloudcomb
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -36,7 +40,7 @@ func (core *ccHTTPCore) SetTimeout(timeout int) {
 }
 
 // purify params by "\n", "\t"
-func PurifyParams(params string) string  {
+func PurifyParams(params string) string {
 	params = strings.Replace(params, "\n", "", -1)
 	params = strings.Replace(params, "\t", "", -1)
 	return params
@@ -44,7 +48,7 @@ func PurifyParams(params string) string  {
 
 // do http request
 func (core *ccHTTPCore) doHTTPRequest(method, url string, headers map[string]string,
-	body io.Reader) (resp *http.Response, err error) {
+	body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
@@ -69,12 +73,13 @@ func (core *ccHTTPCore) doHTTPRequest(method, url string, headers map[string]str
 }
 
 func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string]string,
-	value interface{}) (result string, rtHeaders http.Header, err error) {
+	value interface{}) (string, http.Header, error) {
 	// Normalize url
 	if !strings.HasPrefix(uri, "/") {
 		uri = "/" + uri
 	}
 	url := fmt.Sprintf("https://%s%s", cc.endpoint, uri)
+	fmt.Printf("url=%s\n", url)
 
 	// Normalize query
 	if query != "" {
@@ -92,13 +97,19 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 
 	}
 	// Content-Type:application/json
-	headers["Content-Type"] = "application/json"
+	if headers["Content-Type"] == "" {
+		headers["Content-Type"] = "application/json"
+	}
+	fmt.Printf("headers=%v\n", headers)
 
 	// body
 	rc, ok := value.(io.Reader)
 	// GET and HEAD method have no body
 	if !ok || method == "GET" || method == "HEAD" {
 		rc = nil
+	}
+	if rc != nil {
+		fmt.Printf("body=%s\n", rc)
 	}
 
 	// do HTTP request
@@ -129,4 +140,36 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 		return "", resp.Header, err
 	}
 
+}
+
+func (cc *CloudComb) doFormRequest(url string, params map[string]string, paramName, path string) (result string, rtHeaders http.Header, err error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", nil, err
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{} // generate form data
+	headers := make(map[string]string)
+
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("docker_file", filepath.Base(path))
+	if err != nil {
+		return "", nil, err
+	}
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return "", nil, err
+	}
+
+	headers["Content-Type"] = writer.FormDataContentType()
+
+	err = writer.Close()
+
+	if err != nil {
+		return "", nil, err
+	}
+
+	// do rest request
+	return cc.doRESTRequest("POST", url, "", headers, body)
 }
