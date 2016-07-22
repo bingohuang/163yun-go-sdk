@@ -193,42 +193,55 @@ func TestCloudComb_GetCluster(t *testing.T) {
 	}
 }
 
-func TestCloudComb_UpdateCluster(t *testing.T) {
-	params := `{
-	  "desc": "%s"
-	}`
-	params = fmt.Sprintf(params, "Modify description")
-	if err := cc.UpdateCluster(cc.ClusterID, params); err != nil {
-		fmt.Println(err)
-		t.Errorf("Fail to get response. %v", err)
-	} else {
-		fmt.Printf("Update success. \n\n")
-		time.Sleep(time.Second * 30)
-	}
-}
-
 func TestCloudComb_ReplicateCluster(t *testing.T) {
 	if err := cc.ReplicateCluster(cc.ClusterID, 2); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
 		fmt.Printf("Replicate success. \n\n")
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 30)
+	}
+}
+
+func TestCloudComb_UpdateCluster(t *testing.T) {
+	params := `{
+	  "desc": "%s"
+	}`
+	params = fmt.Sprintf(params, fmt.Sprintf("Modify description: %v",  time.Now()))
+	if err := cc.UpdateCluster(cc.ClusterID, params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Update success. \n\n")
+		time.Sleep(time.Second *30)
 	}
 }
 
 func TestCloudComb_WatchCluster(t *testing.T) {
-	// fixme: goroutine to watch the result, but not useful
-	go watchCluster(t)
-}
+	// use goroutine to watch the update result
+	watch := make(chan bool, 1)
+	go func() {
 
-func watchCluster(t *testing.T) {
-	if res, err := cc.WatchCluster(cc.ClusterID); err != nil {
-		fmt.Println(err)
-		t.Errorf("Fail to get response. %v", err)
-	} else {
-		fmt.Printf("Get response: %s\n\n", res)
+		if res, err := cc.WatchCluster(cc.ClusterID); err != nil {
+			fmt.Println(err)
+			t.Errorf("Fail to get response. %v", err)
+		} else {
+			fmt.Printf("Get watch response: %s\n\n", res)
+		}
+		watch <- true
+	}()
+
+	update := make(chan bool, 1)
+	go func() {
+		TestCloudComb_UpdateCluster(t)
+		update <- true
+	}()
+
+	select {
+	case <-watch: // 从watch中读取到数据
+	case <-update: // 一直没有从watch中读取到数据,但从update中读取到了数据,这就超时结束了
 	}
+	time.Sleep(time.Second *10)
 }
 
 func TestCloudComb_DeleteCluster(t *testing.T) {
