@@ -4,8 +4,8 @@
 
 ### features
 
-+ add all the  open api (https://c.163.com/wiki/index.php?title=OpenAPI%E4%BB%8B%E7%BB%8D)
-+ add all the function (26 test functions)
++ support all the current open API for CloudComb (https://c.163.com/wiki/index.php?title=OpenAPI%E4%BB%8B%E7%BB%8D)
++ add all the function for open API (26 test functions)
 
 ## Version 0.0.4 (2016.07.05)
 
