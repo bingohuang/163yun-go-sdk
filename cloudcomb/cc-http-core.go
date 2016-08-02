@@ -79,7 +79,7 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 		uri = "/" + uri
 	}
 	url := fmt.Sprintf("https://%s%s", cc.endpoint, uri)
-	fmt.Printf("url=%s\n", url)
+	//fmt.Printf("url=%s\n", url)
 
 	// Normalize query
 	if query != "" {
@@ -100,7 +100,7 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 	if headers["Content-Type"] == "" {
 		headers["Content-Type"] = "application/json"
 	}
-	fmt.Printf("headers=%v\n", headers)
+	//fmt.Printf("headers=%v\n", headers)
 
 	// body
 	rc, ok := value.(io.Reader)
@@ -109,7 +109,7 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 		rc = nil
 	}
 	if rc != nil {
-		fmt.Printf("body=%s\n", rc)
+		//fmt.Printf("body=%s\n", rc)
 	}
 
 	// do HTTP request

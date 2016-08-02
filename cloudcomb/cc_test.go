@@ -20,11 +20,11 @@ var (
 
 /*=== user start 1 ===*/
 func TestCloudComb_UserToken(t *testing.T) {
-	if token, expiresIn, err := cc.UserToken(); err != nil {
+	if token, err := cc.UserToken(); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get token=%s and expires_in=%d\n\n", token, expiresIn)
+		fmt.Printf("Get token=%s and expires_in=%d\n\n", token)
 		cc.Token = token
 	}
 }
@@ -270,7 +270,7 @@ func TestCloudComb_CreateRepository(t *testing.T) {
 	} else {
 		fmt.Printf("Create success. \n\n")
 	}
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * 60)
 }
 
 func TestCloudComb_GetRepository(t *testing.T) {

@@ -63,7 +63,7 @@ func NewCC(appKey, appSecret string) *CloudComb {
 
 /*=== user start 1 ===*/
 // Get user's token
-func (cc *CloudComb) UserToken() (string, uint, error) {
+func (cc *CloudComb) UserToken() (string, error) {
 	// user token request params
 	type userTokenReq struct {
 		AppKey    string `json:"app_key"`
@@ -78,28 +78,28 @@ func (cc *CloudComb) UserToken() (string, uint, error) {
 	body := new(bytes.Buffer)
 	err := json.NewEncoder(body).Encode(req)
 	if err != nil {
-		return "", 0, err
+		return "", err
 	}
 
 	// do rest request
 	result, _, err := cc.doRESTRequest("POST", "/api/v1/token", "", nil, body)
 	if err != nil {
-		return "", 0, err
+		return "", err
 	}
 
 	// user token response messages
 	type userTokenRes struct {
 		Token     string `json:"token"`
-		ExpiresIn uint   `json:"expires_in"`
+		//ExpiresIn uint   `json:"expires_in"`
 	}
 	var res userTokenRes
 
 	// parse json
 	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
-		return "", 0, err
+		return "", err
 	}
 
-	return res.Token, res.ExpiresIn, nil
+	return res.Token, nil
 }
 
 /*=== user end ===*/
