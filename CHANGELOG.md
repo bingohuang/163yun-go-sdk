@@ -1,5 +1,8 @@
 # CloudComb Go SDK ChangeLog
 
+## Version 1.1.0 (2016.08.08)
++ refactor github name and package name
+
 ## Version 1.0.1 (2016.07.22)
 + optimize TestCloudComb_WatchCluster, use goroutine to watch the update result
 
