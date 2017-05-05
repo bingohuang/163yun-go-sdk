@@ -142,7 +142,7 @@ func (cc *CloudComb) doRESTRequest(method, uri, query string, headers map[string
 
 }
 
-func (cc *CloudComb) doFormRequest(url string, params map[string]string, paramName, path string) (result string, rtHeaders http.Header, err error) {
+func (cc *CloudComb) doFormRequest(url string, params map[string]string, paramName, path string) (string, http.Header, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return "", nil, err

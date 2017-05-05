@@ -24,7 +24,7 @@ func TestCloudComb_UserToken(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Get token=%s and expires_in=%d\n\n", token)
+		fmt.Printf("Get token=%s\n\n", token)
 		cc.Token = token
 	}
 }
@@ -123,7 +123,7 @@ func TestCloudComb_UpdateContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Update success. \n\n")
+		fmt.Print("Update success. \n\n")
 		time.Sleep(time.Second * 10)
 	}
 }
@@ -133,7 +133,7 @@ func TestCloudComb_RestartContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Restart success. \n\n")
+		fmt.Print("Restart success. \n\n")
 		time.Sleep(time.Second * 30)
 	}
 }
@@ -143,7 +143,7 @@ func TestCloudComb_DeleteContainer(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Delete success. \n\n")
+		fmt.Print("Delete success. \n\n")
 	}
 }
 
@@ -198,7 +198,7 @@ func TestCloudComb_ReplicateCluster(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Replicate success. \n\n")
+		fmt.Print("Replicate success. \n\n")
 		time.Sleep(time.Second * 30)
 	}
 }
@@ -212,7 +212,7 @@ func TestCloudComb_UpdateCluster(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Update success. \n\n")
+		fmt.Print("Update success. \n\n")
 		time.Sleep(time.Second *30)
 	}
 }
@@ -249,7 +249,7 @@ func TestCloudComb_DeleteCluster(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Delete success.\n\n")
+		fmt.Print("Delete success.\n\n")
 	}
 }
 
@@ -268,7 +268,7 @@ func TestCloudComb_CreateRepository(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Create success. \n\n")
+		fmt.Print("Create success. \n\n")
 	}
 	time.Sleep(time.Second * 60)
 }
@@ -289,7 +289,7 @@ func TestCloudComb_DeleteRepository(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Delete success. \n\n")
+		fmt.Print("Delete success. \n\n")
 	}
 }
 
@@ -332,6 +332,6 @@ func TestCloudComb_DeleteSecretKey(t *testing.T) {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
-		fmt.Printf("Delete success. \n\n")
+		fmt.Print("Delete success. \n\n")
 	}
 }

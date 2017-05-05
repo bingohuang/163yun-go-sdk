@@ -1,7 +1,8 @@
-# CloudComb Go SDK ChangeLog
+# 163yun Go SDK ChangeLog
 
 ## Version 2.0.0 (2017.05.07)
-+ renanme sdk name and update README
+* **163yun:** renanme sdk name and update README
++ **cloudcomb:** refactor package cloudcomb
 
 ## Version 1.1.0 (2016.08.08)
 * refactor github name and package name
@@ -16,7 +17,6 @@
 ## Version 0.0.4 (2016.07.05)
 + finish container relate api
 + add several container test function
-
 
 ## Version 0.0.3 (2016.06.30)
 + add several container api

@@ -1,6 +1,9 @@
-163yun-Go-SDK
+[网易云](https://www.163yun.com/) OpenAPI [Go SDK](https://github.com/bingohuang/163yun-go-sdk)
 =============
-[网易云](https://www.163yun.com/) [OpenAPI](https://www.163yun.com/help/assets?tab=api) [Go SDK](https://github.com/bingohuang/163yun-go-sdk)
+
+包含的功能有:
+
+* [网易云基础服务API](https://www.163yun.com/docs/product/service/OpenAPI%20%E4%BB%8B%E7%BB%8D)
 
 ## 简介
 
