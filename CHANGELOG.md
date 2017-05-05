@@ -1,10 +1,13 @@
 # CloudComb Go SDK ChangeLog
 
+## Version 2.0.0 (2017.05.07)
++ renanme sdk name and update README
+
 ## Version 1.1.0 (2016.08.08)
-+ refactor github name and package name
+* refactor github name and package name
 
 ## Version 1.0.1 (2016.07.22)
-+ optimize TestCloudComb_WatchCluster, use goroutine to watch the update result
+* optimize TestCloudComb_WatchCluster, use goroutine to watch the update result
 
 ## Version 1.0.0 (2016.07.21)
 + support all the current open API for CloudComb (https://c.163.com/wiki/index.php?title=OpenAPI%E4%BB%8B%E7%BB%8D)
