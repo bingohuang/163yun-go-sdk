@@ -25,6 +25,8 @@ type CloudComb struct {
 	Repository
 
 	SecretKey
+
+	Namespace
 }
 
 type User struct {
@@ -45,6 +47,10 @@ type Repository struct {
 
 type SecretKey struct {
 	SecretKeyID string
+}
+
+type Namespace struct {
+	NamespaceID string
 }
 
 // New CloudComb
@@ -89,7 +95,7 @@ func (cc *CloudComb) UserToken() (string, error) {
 
 	// user token response messages
 	type userTokenRes struct {
-		Token     string `json:"token"`
+		Token string `json:"token"`
 		//ExpiresIn uint   `json:"expires_in"`
 	}
 	var res userTokenRes
@@ -525,3 +531,77 @@ func (cc *CloudComb) DeleteSecretKey(id string) error {
 }
 
 /*=== secret-keys end ===*/
+
+/*=== namespaces start count=4 ===*/
+
+// create namespace
+func (cc *CloudComb) CreateNamespace(params string) (uint, error) {
+	if params == "" {
+		return 0, errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
+
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/namespaces", "", nil, body)
+	if err != nil {
+		return 0, err
+	}
+
+	// create cluster response messages
+	type createNamespaceRes struct {
+		Id uint `json:"namespace_id"`
+	}
+	var res createNamespaceRes
+
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return 0, err
+	}
+
+	return res.Id, nil
+}
+
+// list namespaces
+func (cc *CloudComb) GetNamespaces() (string, error) {
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/namespaces", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get namespace services
+func (cc *CloudComb) GetNamespaceServices(id string, offset int, limit int) (string, error) {
+	if id == "" {
+		return "", errors.New("Namespace id is missed")
+	}
+	uri := "/api/v1/namespaces/" + id + "/microservices"
+	// TODO: ?offset=0&limit=10
+	//if offset >= 0 || limit > 0 {
+	//	uri += "?"
+	//}
+	result, _, err := cc.doRESTRequest("GET", uri, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// delete secret key
+func (cc *CloudComb) DeleteNamespace(id string) error {
+	if id == "" {
+		return errors.New("Namespace id is missed")
+	}
+	// do rest request
+	_, _, err := cc.doRESTRequest("DELETE", "/api/v1/namespaces/"+id, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*=== namespaces end ===*/

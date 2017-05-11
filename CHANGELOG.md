@@ -1,5 +1,8 @@
 # 163yun Go SDK ChangeLog
 
+## Version 2.0.1 (2017.05.11)
++ **cloudcomb:** add namespace api
+
 ## Version 2.0.0 (2017.05.07)
 * **163yun:** renanme sdk name and update README
 + **cloudcomb:** refactor package cloudcomb

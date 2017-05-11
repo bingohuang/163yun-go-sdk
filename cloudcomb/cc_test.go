@@ -207,13 +207,13 @@ func TestCloudComb_UpdateCluster(t *testing.T) {
 	params := `{
 	  "desc": "%s"
 	}`
-	params = fmt.Sprintf(params, fmt.Sprintf("Modify description: %v",  time.Now()))
+	params = fmt.Sprintf(params, fmt.Sprintf("Modify description: %v", time.Now()))
 	if err := cc.UpdateCluster(cc.ClusterID, params); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
 		fmt.Print("Update success. \n\n")
-		time.Sleep(time.Second *30)
+		time.Sleep(time.Second * 30)
 	}
 }
 
@@ -241,7 +241,7 @@ func TestCloudComb_WatchCluster(t *testing.T) {
 	case <-watch: // 从watch中读取到数据
 	case <-update: // 一直没有从watch中读取到数据,但从update中读取到了数据,这就超时结束了
 	}
-	time.Sleep(time.Second *10)
+	time.Sleep(time.Second * 10)
 }
 
 func TestCloudComb_DeleteCluster(t *testing.T) {
@@ -329,6 +329,49 @@ func TestCloudComb_GetSecretKey(t *testing.T) {
 
 func TestCloudComb_DeleteSecretKey(t *testing.T) {
 	if err := cc.DeleteSecretKey(cc.SecretKeyID); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Print("Delete success. \n\n")
+	}
+}
+
+/*=== namespaces start count=5 ===*/
+func TestCloudComb_CreateNamespace(t *testing.T) {
+	params := `{
+				"name": "%s"
+			  }`
+	params = fmt.Sprintf(params, "test-namespace")
+	if id, err := cc.CreateNamespace(params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get Namespace: id=%d\n\n", id)
+		cc.NamespaceID = fmt.Sprint(id)
+		time.Sleep(time.Second * 1)
+	}
+}
+
+func TestCloudComb_GetNamespaces(t *testing.T) {
+	if res, err := cc.GetNamespaces(); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_GetNamespaceServices(t *testing.T) {
+	if res, err := cc.GetNamespaceServices(cc.NamespaceID, -1, -1); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_DeleteNamespace(t *testing.T) {
+	if err := cc.DeleteNamespace(cc.NamespaceID); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
