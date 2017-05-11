@@ -61,7 +61,7 @@ func NewCC(appKey, appSecret string) *CloudComb {
 	return cc
 }
 
-/*=== user start 1 ===*/
+/*=== user start count=1 ===*/
 // Get user's token
 func (cc *CloudComb) UserToken() (string, error) {
 	// user token request params
@@ -104,7 +104,7 @@ func (cc *CloudComb) UserToken() (string, error) {
 
 /*=== user end ===*/
 
-/*=== containers start 9 ===*/
+/*=== containers start count=9 ===*/
 // list all containers' images
 func (cc *CloudComb) GetContainersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/containers/images", "", nil, nil)
@@ -263,7 +263,7 @@ func (cc *CloudComb) DeleteContainer(id string) error {
 
 /*=== containers end ===*/
 
-/*=== clusters(apps) start 8 ===*/
+/*=== clusters(apps) start count=8 ===*/
 // list all clusters' images
 func (cc *CloudComb) GetClustersImages() (string, error) {
 	result, _, err := cc.doRESTRequest("GET", "/api/v1/apps/images", "", nil, nil)
@@ -391,7 +391,7 @@ func (cc *CloudComb) DeleteCluster(id string) error {
 
 /*=== clusters(apps) end ===*/
 
-/*=== repositories start 4 ===*/
+/*=== repositories start count=4 ===*/
 // list repositories
 func (cc *CloudComb) GetRepositories() (string, error) {
 	// TODO query: limit=20&offset=0
@@ -454,7 +454,7 @@ func (cc *CloudComb) DeleteRepository(repoName string, tag string) error {
 
 /*=== repositories end ===*/
 
-/*=== secret-keys start 4 ===*/
+/*=== secret-keys start count=4 ===*/
 
 // list secret keys
 func (cc *CloudComb) GetSecretKeys() (string, error) {

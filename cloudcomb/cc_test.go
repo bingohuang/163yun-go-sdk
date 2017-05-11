@@ -18,7 +18,7 @@ var (
 	filePath  = "Dockerfile"
 )
 
-/*=== user start 1 ===*/
+/*=== user start count=1 ===*/
 func TestCloudComb_UserToken(t *testing.T) {
 	if token, err := cc.UserToken(); err != nil {
 		fmt.Println(err)
@@ -29,7 +29,7 @@ func TestCloudComb_UserToken(t *testing.T) {
 	}
 }
 
-/*=== containers start 9 ===*/
+/*=== containers start count=9 ===*/
 // https://c.163.com/wiki/index.php?title=容器API
 func TestCloudComb_GetContainersImages(t *testing.T) {
 	if res, err := cc.GetContainersImages(); err != nil {
@@ -147,7 +147,7 @@ func TestCloudComb_DeleteContainer(t *testing.T) {
 	}
 }
 
-/*=== clusters(apps) start 8 ===*/
+/*=== clusters(apps) start count=8 ===*/
 func TestCloudComb_GetClustersImages(t *testing.T) {
 	if res, err := cc.GetClustersImages(); err != nil {
 		fmt.Println(err)
@@ -253,7 +253,7 @@ func TestCloudComb_DeleteCluster(t *testing.T) {
 	}
 }
 
-/*=== repositories start 4 ===*/
+/*=== repositories start count=4 ===*/
 func TestCloudComb_GetRepositories(t *testing.T) {
 	if res, err := cc.GetRepositories(); err != nil {
 		fmt.Println(err)
@@ -293,7 +293,7 @@ func TestCloudComb_DeleteRepository(t *testing.T) {
 	}
 }
 
-/*=== secret-keys start 4 ===*/
+/*=== secret-keys start count=4 ===*/
 func TestCloudComb_GetSecretKeys(t *testing.T) {
 	if res, err := cc.GetSecretKeys(); err != nil {
 		fmt.Println(err)
