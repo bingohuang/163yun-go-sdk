@@ -1,5 +1,8 @@
 # 163yun Go SDK ChangeLog
 
+## Version 2.0.2 (2017.05.19)
++ **cloudcomb:** add microservice api
+
 ## Version 2.0.1 (2017.05.11)
 + **cloudcomb:** add namespace api
 

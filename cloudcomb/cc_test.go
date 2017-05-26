@@ -378,3 +378,86 @@ func TestCloudComb_DeleteNamespace(t *testing.T) {
 		fmt.Print("Delete success. \n\n")
 	}
 }
+
+/*=== microservices start count=3 ===*/
+func TestCloudComb_CreateMicroservice(t *testing.T) {
+	params := `{
+		"bill_info":"default",
+		"service_info": {
+			"namespace_id": "51616",
+			"stateful": 1,
+			"replicas": 1,
+			"service_name": "ubuntu",
+			"port_maps": [
+				{
+					"target_port": "80",
+					"port": "8080",
+					"protocol": "TCP"
+				}
+			],
+			"spec_alias": "C1M2S20",
+			"state_public_net": {
+				"used": true,
+				"type": "flow",
+				"bandwidth": 20
+			},
+			"disk_type": 0,
+			"ip_id": "cef9069c-d97d-42b1-a86c-f815f748820c"
+		},
+		"service_container_infos": [
+			{
+				"image_path": "hub.c.163.com/public/ubuntu:14.04",
+				"container_name": "container002",
+				"command": "",
+				"envs": [
+					{
+						"key": "password",
+						"value": "password"
+					},
+					{
+						"key": "user",
+						"value": "user"
+					}
+				],
+				"log_dirs": [
+					"/var/log/"
+				],
+				"cpu_weight": 100,
+				"memory_weight": 100,
+				"ssh_keys": [
+					"sshkey1","sshkey2"
+				],
+				"volume_info": {
+					"163": "/mnt/"
+				}
+			}
+		]
+	}`
+	params = fmt.Sprintf(params, "test-namespace")
+	if id, err := cc.CreateMicroservice(params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get Microservice: id=%d\n\n", id)
+		cc.ServiceID = fmt.Sprint(id)
+		time.Sleep(time.Second * 30)
+	}
+}
+
+func TestCloudComb_GetMicroservice(t *testing.T) {
+	if res, err := cc.GetMicroservice(); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_DeleteMicroservice(t *testing.T) {
+	if err := cc.DeleteMicroservice(cc.ServiceID, true); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Print("Delete success. \n\n")
+	}
+}

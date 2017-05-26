@@ -27,6 +27,8 @@ type CloudComb struct {
 	SecretKey
 
 	Namespace
+
+	Microservice
 }
 
 type User struct {
@@ -51,6 +53,10 @@ type SecretKey struct {
 
 type Namespace struct {
 	NamespaceID string
+}
+
+type Microservice struct {
+	ServiceID string
 }
 
 // New CloudComb
@@ -591,13 +597,70 @@ func (cc *CloudComb) GetNamespaceServices(id string, offset int, limit int) (str
 	return result, nil
 }
 
-// delete secret key
+// delete namespace
 func (cc *CloudComb) DeleteNamespace(id string) error {
 	if id == "" {
 		return errors.New("Namespace id is missed")
 	}
 	// do rest request
 	_, _, err := cc.doRESTRequest("DELETE", "/api/v1/namespaces/"+id, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*=== namespaces end ===*/
+
+/*=== microservices start count= ===*/
+
+// create microservice
+func (cc *CloudComb) CreateMicroservice(params string) (uint, error) {
+	if params == "" {
+		return 0, errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
+
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/microservices", "", nil, body)
+	if err != nil {
+		return 0, err
+	}
+
+	// create cluster response messages
+	type createMicroserviceRes struct {
+		Id uint `json:"service_id"`
+	}
+	var res createMicroserviceRes
+
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return 0, err
+	}
+
+	return res.Id, nil
+}
+
+// get microservice
+func (cc *CloudComb) GetMicroservice() (string, error) {
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/microservices", "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// delete microservice
+func (cc *CloudComb) DeleteMicroservice(id string, freeIp bool) error {
+	if id == "" {
+		return errors.New("Microservice id is missed")
+	}
+	// do rest request
+	uri := "/api/v1/microservices/" + id + "?free_ip=" + strconv.FormatBool(freeIp)
+	_, _, err := cc.doRESTRequest("DELETE", uri, "", nil, nil)
 	if err != nil {
 		return err
 	}
