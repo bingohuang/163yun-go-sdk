@@ -638,7 +638,7 @@ func (cc *CloudComb) CreateMicroservice(params string) (uint, error) {
 
 	// create cluster response messages
 	type createMicroserviceRes struct {
-		Id uint `json:"service_id"`
+		Id string `json:"service_id"`
 	}
 	var res createMicroserviceRes
 
@@ -646,13 +646,17 @@ func (cc *CloudComb) CreateMicroservice(params string) (uint, error) {
 	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
 		return 0, err
 	}
+	id, err := strconv.ParseUint(res.Id, 10, 32)
 
-	return res.Id, nil
+	return uint(id), nil
 }
 
 // get microservice
-func (cc *CloudComb) GetMicroservice() (string, error) {
-	result, _, err := cc.doRESTRequest("GET", "/api/v1/microservices", "", nil, nil)
+func (cc *CloudComb) GetMicroservice(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Microservice id is missed")
+	}
+	result, _, err := cc.doRESTRequest("GET", "/api/v1/microservices/"+id, "", nil, nil)
 	if err != nil {
 		return "", err
 	}

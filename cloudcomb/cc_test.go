@@ -384,10 +384,10 @@ func TestCloudComb_CreateMicroservice(t *testing.T) {
 	params := `{
 		"bill_info":"default",
 		"service_info": {
-			"namespace_id": "51616",
+			"namespace_id": "93210",
 			"stateful": 1,
 			"replicas": 1,
-			"service_name": "ubuntu",
+			"service_name": "test-ubuntu",
 			"port_maps": [
 				{
 					"target_port": "80",
@@ -401,13 +401,13 @@ func TestCloudComb_CreateMicroservice(t *testing.T) {
 				"type": "flow",
 				"bandwidth": 20
 			},
-			"disk_type": 0,
-			"ip_id": "cef9069c-d97d-42b1-a86c-f815f748820c"
+			"disk_type": 2,
+			"ip_id": "3e90c24d-2f0b-4fc8-a0c1-53220259dc54"
 		},
 		"service_container_infos": [
 			{
 				"image_path": "hub.c.163.com/public/ubuntu:14.04",
-				"container_name": "container002",
+				"container_name": "test-ubuntu",
 				"command": "",
 				"envs": [
 					{
@@ -425,15 +425,13 @@ func TestCloudComb_CreateMicroservice(t *testing.T) {
 				"cpu_weight": 100,
 				"memory_weight": 100,
 				"ssh_keys": [
-					"sshkey1","sshkey2"
-				],
-				"volume_info": {
-					"163": "/mnt/"
-				}
+					"test"
+				]
 			}
 		]
 	}`
-	params = fmt.Sprintf(params, "test-namespace")
+	// create stateful service
+	//params = fmt.Sprintf(params, "test-namespace")
 	if id, err := cc.CreateMicroservice(params); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
@@ -445,7 +443,7 @@ func TestCloudComb_CreateMicroservice(t *testing.T) {
 }
 
 func TestCloudComb_GetMicroservice(t *testing.T) {
-	if res, err := cc.GetMicroservice(); err != nil {
+	if res, err := cc.GetMicroservice(cc.ServiceID); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
@@ -454,7 +452,9 @@ func TestCloudComb_GetMicroservice(t *testing.T) {
 }
 
 func TestCloudComb_DeleteMicroservice(t *testing.T) {
-	if err := cc.DeleteMicroservice(cc.ServiceID, true); err != nil {
+	// wait microservice state
+	time.Sleep(time.Second * 30)
+	if err := cc.DeleteMicroservice(cc.ServiceID, false); err != nil {
 		fmt.Println(err)
 		t.Errorf("Fail to get response. %v", err)
 	} else {
