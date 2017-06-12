@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -29,6 +30,8 @@ type CloudComb struct {
 	Namespace
 
 	Microservice
+
+	Ips
 }
 
 type User struct {
@@ -57,6 +60,10 @@ type Namespace struct {
 
 type Microservice struct {
 	ServiceID string
+}
+
+type Ips struct {
+	IpIDs []string
 }
 
 // New CloudComb
@@ -667,4 +674,132 @@ func (cc *CloudComb) DeleteMicroservice(id string, freeIp bool) error {
 	return nil
 }
 
-/*=== namespaces end ===*/
+/*=== microservices end ===*/
+
+/*=== IP start count=6 ===*/
+
+// create IP
+func (cc *CloudComb) CreateIP(params string) ([]string, []string, error) {
+	if params == "" {
+		return nil, nil, errors.New("Params is missed")
+	}
+	params = PurifyParams(params)
+
+	body := bytes.NewBufferString(params)
+
+	// do rest request
+	result, _, err := cc.doRESTRequest("POST", "/api/v1/ips", "", nil, body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// create response messages
+
+	type ip struct {
+		Id          string `json:"id"`
+		Ip          string `json:"ip"`
+		Status      string `json:"status"`
+		IpType      string `json:"type"`
+		ServiceId   string `json:"service_id"`
+		ServiceName string `json:"service_name"`
+		ServiceType string `json:"service_type"`
+		CreateAt    string `json:"create_at"`
+		UpdateAt    string `json:"update_at"`
+	}
+
+	type createIpRes struct {
+		Total uint `json:"total"`
+		Ips   []ip `json:"ips"`
+	}
+	var res createIpRes
+
+	// parse json
+	if err := json.NewDecoder(strings.NewReader(result)).Decode(&res); err != nil {
+		return nil, nil, err
+	}
+
+	var ids []string
+	var ips []string
+	for _, v := range res.Ips {
+		ids = append(ids, v.Id)
+		ips = append(ips, v.Ip)
+	}
+
+	return ids, ips, nil
+}
+
+// list IPs
+func (cc *CloudComb) GetIPs(status string, iptype string, offset int, limit int) (string, error) {
+	uri := "/api/v1/ips?" + fmt.Sprint(offset) + "&" + fmt.Sprint(limit)
+	if status != "" {
+		uri += "&" + status
+	}
+	if iptype != "" {
+		uri += "&" + iptype
+	}
+
+	result, _, err := cc.doRESTRequest("GET", uri, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get IP
+func (cc *CloudComb) GetIP(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("IP id is missed")
+	}
+	uri := "/api/v1/ips/" + id
+
+	result, _, err := cc.doRESTRequest("GET", uri, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get IP quota
+func (cc *CloudComb) GetIPQuota() (string, error) {
+	uri := "api/v1/ips/quota"
+
+	result, _, err := cc.doRESTRequest("GET", uri, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// get IP cost
+func (cc *CloudComb) GetIPCost(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("IP id is missed")
+	}
+	uri := "api/v1/ips/" + id + "/cost"
+
+	result, _, err := cc.doRESTRequest("GET", uri, "", nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+// delete IP
+func (cc *CloudComb) DeleteIP(id string) error {
+	if id == "" {
+		return errors.New("IP id is missed")
+	}
+	uri := "api/v1/ips/" + id
+	// do rest request
+	_, _, err := cc.doRESTRequest("DELETE", uri, "", nil, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*=== IP end ===*/

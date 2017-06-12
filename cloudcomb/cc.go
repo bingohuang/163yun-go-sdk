@@ -35,7 +35,6 @@ func escapeURI(uri string) string {
 }
 
 // Because of io.Copy use a 32Kb buffer, and, it is hard coded
-// user can specify a chunksize with upyun.SetChunkSize
 func chunkedCopy(dst io.Writer, src io.Reader) (written int64, err error) {
 	buf := make([]byte, chunkSize)
 

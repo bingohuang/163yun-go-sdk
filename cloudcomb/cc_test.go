@@ -461,3 +461,64 @@ func TestCloudComb_DeleteMicroservice(t *testing.T) {
 		fmt.Print("Delete success. \n\n")
 	}
 }
+
+/*=== IP start count=4 ===*/
+func TestCloudComb_CreateIP(t *testing.T) {
+	params := `{
+				"nce": "%d",
+				"nlb": "%d"
+			  }`
+	params = fmt.Sprintf(params, 1, 1)
+	if ids, ips, err := cc.CreateIP(params); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get IP: ids=%v\n\n", ids)
+		fmt.Printf("Get IP: ips=%v\n\n", ips)
+		cc.IpIDs = ids
+		time.Sleep(time.Second * 1)
+	}
+}
+
+func TestCloudComb_GetIPs(t *testing.T) {
+	if res, err := cc.GetIPs("", "", 0, 2); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_GetIP(t *testing.T) {
+	// Get first IP
+	if res, err := cc.GetIP(cc.IpIDs[0]); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+	// Get second IP
+	if res, err := cc.GetIP(cc.IpIDs[1]); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Printf("Get response: %s\n\n", res)
+	}
+}
+
+func TestCloudComb_DeleteIP(t *testing.T) {
+	// delete first IP
+	if err := cc.DeleteIP(cc.IpIDs[0]); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Print("Delete success. \n\n")
+	}
+	// delete second IP
+	if err := cc.DeleteIP(cc.IpIDs[1]); err != nil {
+		fmt.Println(err)
+		t.Errorf("Fail to get response. %v", err)
+	} else {
+		fmt.Print("Delete success. \n\n")
+	}
+}
